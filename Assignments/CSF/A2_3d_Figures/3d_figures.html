@@ -1,0 +1,33 @@
+<html>
+
+<head>
+<title>3d Figures</title>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<script src="../libs/jquery-3.3.1/jquery-3.3.1.js"></script>
+<script src="../libs/gl-matrix/gl-matrix.js"></script>
+
+<script src="3d_figures.js"></script>
+
+<script type="text/javascript">
+          
+	$(document).ready(
+			function() {
+		        var canvas = document.getElementById("webglcanvas");
+			    var gl = initWebGL(canvas);
+		        initViewport(gl, canvas);
+		        initGL(canvas);
+				initShader(gl);
+				// TO DO: create and draw the figures
+				run(gl, []);
+			}
+	);
+
+</script>
+
+</head>
+<body>
+
+    <canvas id="webglcanvas" style="border: none;" width="500" height="500"></canvas>
+
+</body>
+</html>
