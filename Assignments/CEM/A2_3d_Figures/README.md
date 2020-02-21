@@ -14,9 +14,6 @@ Assignment No 2 for the computer graphics course. Modify previous code examples 
 4. Each face of each figure was rendered with a different color.
 5. The figures were transformed correctly.
 
-**Deadline: 01/02/2019 1:00pm**
-
-
 <img src="Images/Pyramid.png" width="300">
 <br/>Figure 1: 3D Pyramid.<br/>
 
