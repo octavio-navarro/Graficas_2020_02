@@ -235,7 +235,4 @@ function createScene(canvas)
     group.add( mesh );
     
     scene.add( root );
-
-    document.getElementById( 'container' ).appendChild(stats.dom);
-
 }
