@@ -8,7 +8,7 @@ cube = null;
 
 let animator = null,
 duration = 10, // sec
-loopAnimation = true;
+loopAnimation = false;
 
 function run() 
 {
@@ -87,7 +87,7 @@ function initAnimations()
                     values:[
                             { y : 0 },
                             { y : Math.PI * 2  },
-                            { y : Math.PI/2 },
+                            { y : 0 },
                             ],
                     target:group.rotation
                 },
