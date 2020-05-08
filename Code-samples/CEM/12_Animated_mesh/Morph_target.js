@@ -6,6 +6,8 @@ group = null,
 orbitControls = null,
 mixer = null;
 
+let horse_base = null;
+
 let morphs = [];
 
 let duration = 20000; // ms
@@ -18,11 +20,12 @@ let mapUrl = "../images/checker_large.gif";
 
 let SHADOW_MAP_WIDTH = 2048, SHADOW_MAP_HEIGHT = 2048;
 
-const modelUrls = ["../models/gltf/Horse.glb", "../models/gltf/Parrot.glb", "../models/gltf/Stork.glb", "../models/gltf/Flamingo.glb"];
+const modelUrls = ["../models/gltf/Horse.glb"];
+// const modelUrls = ["../models/gltf/Horse.glb", "../models/gltf/Parrot.glb", "../models/gltf/Stork.glb", "../models/gltf/Flamingo.glb"];
 
 async function loadGLTF()
 {
-    mixer = new THREE.AnimationMixer( scene );
+    // mixer = new THREE.AnimationMixer( scene );
 
     let modelsPromises = modelUrls.map(url =>{
         return promisifyLoader(new THREE.GLTFLoader()).load(url);
@@ -41,9 +44,27 @@ async function loadGLTF()
             object.position.z = -50 - Math.random() * 50;
             object.castShadow = true;
             object. receiveShadow = true;
-            scene.add(object );
-            morphs.push(object);
-            mixer.clipAction( result.animations[ 0 ], object).setDuration( 0.8 ).play();
+
+            console.log(result);
+
+            
+            // morphs.push(object);           
+
+            horse_base = object;
+
+            setInterval(() => { 
+                if(morphs.length < 10)
+                {
+                    let clone = horse_base.clone();
+                    clone.position.x = Math.random() * 25;
+                    clone.mixer = new THREE.AnimationMixer( scene );
+                    clone.mixer.clipAction( result.animations[ 0 ], clone).setDuration( 2.0 ).play();
+                    clone.state = "running"; 
+                    
+                    scene.add(clone);
+                    morphs.push(clone);
+                }
+            }, 1000);
         });        
     }
     catch(err)
@@ -52,21 +73,37 @@ async function loadGLTF()
     }
 }
 
-function animate() {
+async function sleep(target, time)
+{
+    setTimeout(()=>{target.state="dead";}, time);
+}
+
+async function animate() {
 
     let now = Date.now();
     let deltat = now - currentTime;
     currentTime = now;
 
-    if ( mixer ) {
-        mixer.update( deltat * 0.001 );
-    }
-
     for(let morph of morphs)
     {
-        morph.position.z += 0.03 * deltat;
-        if(morph.position.z > 40)
-            morph.position.z = -70 - Math.random() * 50;
+        if(morph.state === "running")
+            morph.position.z += 0.03 * deltat;
+
+        if(morph.state==="running" && morph.position.z > 10)
+        {
+            morph.mixer.stopAllAction();
+            morph.state = "dying";
+            await sleep(morph, 500);
+        }           
+
+        if(morph.state === "dead")    
+        {
+            scene.remove(morph);
+            morphs.splice(morphs.indexOf(morph), 1);
+        }
+
+        if(morph.mixer)
+            morph.mixer.update(deltat*0.001);
     }
 }
 
@@ -128,6 +165,8 @@ function createScene(canvas) {
     
     // Create the objects
     loadGLTF();
+
+
 
     // Create a group to hold the objects
     group = new THREE.Object3D;
